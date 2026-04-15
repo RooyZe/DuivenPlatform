@@ -11,6 +11,7 @@ namespace DuivenPlatform.Api.Data
 
         public DbSet<Pigeon> Pigeons { get; set; } = null!;
 
+        // Configure database model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

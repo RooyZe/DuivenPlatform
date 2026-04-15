@@ -1,4 +1,5 @@
 using DuivenPlatform.Web.Models;
+using DuivenPlatform.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,10 +8,12 @@ namespace DuivenPlatform.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IPigeonService _pigeonService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IPigeonService pigeonService)
         {
             _logger = logger;
+            _pigeonService = pigeonService;
         }
 
         public IActionResult Index()
@@ -23,22 +26,23 @@ namespace DuivenPlatform.Web.Controllers
             return View();
         }
 
-        public IActionResult Duiven()
+        public IActionResult Pigeons()
         {
             return View();
         }
 
-        public IActionResult Vluchten()
+        public IActionResult Races()
         {
             return View();
         }
 
-        public IActionResult DuivenTeKoop()
+        public async Task<IActionResult> PigeonsForSale()
         {
-            return View();
+            var pigeons = await _pigeonService.GetAllAsync();
+            return View(pigeons);
         }
 
-        public IActionResult Navigatie()
+        public IActionResult Navigation()
         {
             return View();
         }

@@ -1,4 +1,3 @@
-/* BODY */
 body {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
@@ -7,8 +6,6 @@ body {
     justify-content: center;
     padding: 20px 0;
 }
-
-/* APP WRAPPER */
 .app-shell {
     width: 100%;
     max-width: 420px;
@@ -16,33 +13,28 @@ body {
     flex-direction: column;
     padding: 0;
     box-sizing: border-box;
-    background-color: #5e97c9; /* main blue */
+    background-color: #5e97c9; 
     border-radius: 18px;
-    border: 8px solid #ffffff; /* outer white border */
+    border: 8px solid #ffffff; 
     overflow: hidden;
 }
-
-/* HEADER */
 .site-header {
-    background-color: #6ba6d6; /* slightly lighter than main blue */
+    background-color: #6ba6d6; 
     color: white;
     padding: 12px 14px;
     box-sizing: border-box;
 }
-
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
 }
-
 .header-left,
 .header-icons {
     font-size: 14px;
     white-space: nowrap;
 }
-
 .logo-link {
     color: #ffffff;
     text-decoration: none;
@@ -51,51 +43,37 @@ body {
     align-items: center;
     gap: 8px;
 }
-
 .header-title {
     font-weight: 700;
     font-size: 18px;
     text-align: center;
     flex: 1;
 }
-
 .header-title a { color: #ffffff; text-decoration: none; }
-
 .header-icons .icon { color: #ffffff; text-decoration: none; margin-left: 10px; font-size: 18px; }
-
 .header-icons { display: flex; align-items: center; }
-
 .header-icons .nav-link { color: #ffffff; text-decoration: none; margin-right: 8px; font-weight:700; }
-
-/* Logo SVG sizing */
 .logo-link svg { display: block; width: 32px; height: 32px; }
 .logo-img {
     display: block;
     width: 56px;
     height: 56px;
     object-fit: contain;
-    background: transparent; /* let header color show through */
+    background: transparent; 
     padding: 0;
     box-shadow: none;
     border: none;
-    mix-blend-mode: multiply; /* blend white background into header so white appears removed */
+    mix-blend-mode: multiply; 
 }
-
-/* screen reader only */
 .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-/* MAIN */
 .site-main {
     background-color: transparent;
-    padding: 12px; /* give body content some spacing inside card */
+    padding: 12px; 
 }
-
-/* HERO */
 .hero-section {
     position: relative;
     margin: 0;
 }
-
 .hero-image {
     width: 100%;
     height: auto;
@@ -103,7 +81,6 @@ body {
     border-radius: 12px 12px 0 0;
     object-fit: cover;
 }
-
 .hero-text {
     position: absolute;
     left: 50%;
@@ -113,7 +90,6 @@ body {
     text-align: center;
     color: white;
 }
-
     .hero-text h1 {
         margin: 0;
         font-size: 42px;
@@ -121,24 +97,20 @@ body {
         font-weight: 700;
         text-shadow: 0 3px 6px rgba(0, 0, 0, 0.45);
     }
-
 .section-bar {
     text-align: center;
     padding: 12px 10px;
     background-color: #4f8fc0;
 }
-
     .section-bar h2 {
         margin: 0;
         color: white;
         font-size: 18px;
         font-weight: 700;
     }
-
 .info-card {
     padding: 14px 12px 22px 12px;
 }
-
 .info-card-inner {
     background-color: #69a6d6;
     border: 10px solid #ffffff;
@@ -146,7 +118,6 @@ body {
     padding: 18px 16px;
     box-sizing: border-box;
 }
-
     .info-card-inner p {
         margin: 0;
         color: white;
@@ -154,12 +125,9 @@ body {
         line-height: 1.45;
         font-weight: 700;
     }
-
-/* Pigeons list styles */
 .pigeons-list {
     padding: 14px;
 }
-
 .pigeon-card {
     background: transparent;
     border-radius: 8px;
@@ -168,7 +136,6 @@ body {
     border: 10px solid #ffffff;
     box-sizing: border-box;
 }
-
 .card-title {
     text-align: center;
     padding: 10px;
@@ -177,21 +144,14 @@ body {
     background-color: #4f8fc0;
     margin: 0;
 }
-
 .card-image-wrap { background: #ffffff; padding: 12px; }
-
 .card-img { display:block; width:100%; height:auto; }
-
-/* Flights list */
 .flight-list { padding: 14px; }
 .flight-card { margin: 12px 0; border-radius: 8px; overflow: hidden; }
 .flight-card-inner { background: #69a6d6; border: 10px solid #ffffff; padding: 14px; box-sizing: border-box; color:#fff; }
 .flight-title { text-align:center; font-size:18px; margin:0 0 8px 0; font-weight:700; }
 .flight-meta { display:flex; flex-direction:column; gap:6px; text-align:left; margin-bottom:10px; }
 .flight-names { font-weight:700; }
-
-
-/* Navigation overlay */
 .nav-overlay {
     position: fixed;
     inset: 0;
@@ -204,9 +164,7 @@ body {
     transition: opacity 180ms ease, visibility 180ms ease;
     z-index: 2000;
 }
-
 .nav-overlay.open { visibility: visible; opacity: 1; }
-
 .nav-card {
     width: calc(100% - 40px);
     max-width: 400px;
@@ -216,11 +174,8 @@ body {
     padding: 20px;
     box-sizing: border-box;
 }
-
 .nav-card h2 { text-align: center; color: #fff; margin: 0 0 14px 0; font-size: 20px; }
-
 .nav-list { display:flex; flex-direction: column; gap: 12px; }
-
 .nav-item {
     display:block;
     text-align:center;
@@ -233,15 +188,10 @@ body {
     font-size: 36px;
     line-height: 1.1;
 }
-
 .nav-close { margin-top: 12px; display:block; width:100%; padding:10px; border:none; background:#ffffff; color:#4f8fc0; font-weight:700; border-radius:6px; }
-
-/* Responsive tweaks */
 @media (max-width: 420px) {
     .hero-text h1 { font-size: 36px; }
 }
-
-/* Full-page navigation (mobile page) */
 .nav-page { padding: 0 12px 20px 12px; }
 .nav-page .info-card { padding-top: 12px; }
 .nav-page .info-card-inner {
@@ -261,5 +211,72 @@ body {
     border-radius: 6px;
     font-size: 36px;
     line-height: 1.1;
+}
+.pigeons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+.pigeon-card {
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.pigeon-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+.pigeon-info {
+    padding: 15px;
+}
+.pigeon-info h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+.pigeon-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.pigeon-price {
+    background: black;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+.pigeon-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.pigeon-actions .btn {
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: block;
+}
+.btn-info {
+    background: #6f42c1;
+    color: white;
+}
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+.btn-info:hover {
+    background: #5a2d9e;
+}
+.btn-success:hover {
+    background: #218838;
 }
 

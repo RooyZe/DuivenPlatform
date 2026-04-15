@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DuivenPlatform.Api.Data;
 using DuivenPlatform.Api.Models;
+using DuivenPlatform.Api.Services;
 
 namespace DuivenPlatform.Api
 {
@@ -12,13 +13,14 @@ namespace DuivenPlatform.Api
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
 
-        
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             if (!string.IsNullOrEmpty(connectionString))
             {
-                builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
             }
+
+            builder.Services.AddScoped<IPigeonService, PigeonService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -35,8 +37,8 @@ namespace DuivenPlatform.Api
                     if (!context.Pigeons.Any())
                     {
                         context.Pigeons.AddRange(
-                            new Models.Pigeon { Title = "Miss Milos", Price = 1400m, ImageUrl = "https://via.placeholder.com/400x300.png?text=Miss+Milos", Description = "Placeholder pigeon Miss Milos" },
-                            new Models.Pigeon { Title = "Red Rose", Price = 1400m, ImageUrl = "https://via.placeholder.com/400x300.png?text=Red+Rose", Description = "Placeholder pigeon Red Rose" }
+                            new Models.Pigeon { Title = "Miss Milos", Price = 1400m, ImageUrl = "/images/miss-milos.jpg", Description = "Champion racing pigeon from top bloodlines" },
+                            new Models.Pigeon { Title = "Red Rose", Price = 1400m, ImageUrl = "/images/red-rose.jpg", Description = "Beautiful red pigeon with excellent pedigree" }
                         );
                         context.SaveChanges();
                     }

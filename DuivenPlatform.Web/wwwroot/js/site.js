@@ -1,14 +1,7 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-/* Simple SPA navigation: intercept links with class 'spa-link', fetch pages and replace <main class="site-main"> content */
 (function(){
     function selectMain(doc){
         return doc.querySelector('main.site-main') || doc.querySelector('main');
     }
-
     async function loadUrl(url, push){
         try{
             const res = await fetch(url, { headers: { 'X-Requested-With':'XMLHttpRequest' } });
@@ -31,9 +24,7 @@
             window.location.href = url;
         }
     }
-
     function onLinkClick(e){
-        // only handle left-click without modifier keys
         if(e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         const a = e.target.closest('a.spa-link');
         if(!a) return;
@@ -43,7 +34,6 @@
         closeNavOverlay();
         loadUrl(href, true);
     }
-
     function openNavOverlay(){
         const o = document.getElementById('nav-overlay');
         if(!o) return;
@@ -56,7 +46,6 @@
         o.classList.remove('open');
         o.setAttribute('aria-hidden','true');
     }
-
     document.addEventListener('click', function(e){
         const toggle = e.target.closest('#nav-toggle');
         if(toggle){ openNavOverlay(); return; }
@@ -64,10 +53,9 @@
         if(close){ closeNavOverlay(); return; }
         onLinkClick(e);
     });
-
     window.addEventListener('popstate', function(ev){
         const url = location.pathname + location.search;
         loadUrl(url, false);
     });
-
 })();
+
