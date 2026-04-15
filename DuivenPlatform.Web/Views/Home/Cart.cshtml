@@ -1,0 +1,54 @@
+@model List<DuivenPlatform.Web.Models.CartItem>
+@{
+    ViewData["Title"] = "Winkelwagen";
+    var totalPrice = Model?.Sum(item => item.Price) ?? 0;
+}
+
+<section class="home-page">
+    <div class="section-bar">
+        <h2>Winkelwagen</h2>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="cart-container">
+            <a href="@Url.Action("PigeonsForSale")" class="cart-back-button">
+                &lt; Verder winkelen
+            </a>
+
+            @foreach (var item in Model)
+            {
+                <div class="cart-item-card">
+                    <div class="cart-item-image-wrapper">
+                        <img src="@item.ImageUrl" alt="@item.Title" class="cart-item-image" />
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-price-bar">
+                            Prijs: @item.Price.ToString("C")
+                        </div>
+                        <form method="post" asp-action="RemoveFromCart" asp-route-id="@item.PigeonId" class="cart-item-remove-form">
+                            <button type="submit" class="cart-remove-button">Verwijder</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="cart-total-bar">
+                Totaal: @totalPrice.ToString("C")
+            </div>
+
+            <a href="@Url.Action("Checkout", "Home")" class="cart-checkout-button">
+                Verder naar bestellen &gt;
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="info-card">
+            <div class="info-card-inner">
+                <p>Je winkelwagen is leeg.</p>
+                <a href="@Url.Action("PigeonsForSale")" class="btn btn-primary">Naar duiven te koop</a>
+            </div>
+        </div>
+    }
+</section>

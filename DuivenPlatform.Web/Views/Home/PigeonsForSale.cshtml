@@ -26,7 +26,9 @@
                         </div>
                         <div class="pigeon-actions">
                             <a href="#" class="btn btn-info">Meer informatie</a>
-                            <a href="#" class="btn btn-success">Voeg toe!</a>
+                            <form method="post" asp-action="AddToCart" asp-route-id="@pigeon.Id" style="margin: 0;">
+                                <button type="submit" class="btn btn-success">Voeg toe!</button>
+                            </form>
                         </div>
                     </div>
                 </div>

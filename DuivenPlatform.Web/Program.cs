@@ -8,6 +8,13 @@ namespace DuivenPlatform.Web
 
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7153";
             builder.Services.AddHttpClient("DuivenPlatformApi", client =>
             {
@@ -16,6 +23,9 @@ namespace DuivenPlatform.Web
             });
 
             builder.Services.AddScoped<DuivenPlatform.Web.Services.IPigeonService, DuivenPlatform.Web.Services.PigeonService>();
+            builder.Services.AddScoped<DuivenPlatform.Web.Services.ICartService, DuivenPlatform.Web.Services.CartService>();
+            builder.Services.AddScoped<DuivenPlatform.Web.Services.IOrderService, DuivenPlatform.Web.Services.OrderService>();
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
@@ -29,6 +39,8 @@ namespace DuivenPlatform.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 
