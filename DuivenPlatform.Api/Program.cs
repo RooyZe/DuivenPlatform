@@ -13,6 +13,16 @@ namespace DuivenPlatform.Api
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5137", "https://localhost:7153")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             if (!string.IsNullOrEmpty(connectionString))
             {
@@ -58,6 +68,8 @@ namespace DuivenPlatform.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowFrontend");
 
             app.UseAuthorization();
 
