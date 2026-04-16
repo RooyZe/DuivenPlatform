@@ -336,10 +336,6 @@ const router = {
                     <div class="cart-total-bar">
                         Totaal: €${total.toFixed(2)}
                     </div>
-
-                    <a href="#" onclick="router.checkout(); return false;" class="cart-checkout-button">
-                        Verder naar bestellen &gt;
-                    </a>
                 </div>
             </section>
         `;
@@ -377,62 +373,6 @@ const router = {
                 badgeNav.textContent = '';
                 badgeNav.style.display = 'none';
             }
-        }
-    },
-
-    async checkout() {
-        const cartItems = cart.getItems();
-        if (cartItems.length === 0) {
-            alert('Je winkelwagen is leeg');
-            return;
-        }
-
-        const customerName = prompt('Naam:');
-        if (!customerName) return;
-
-        const email = prompt('Email:');
-        if (!email) return;
-
-        const phoneNumber = prompt('Telefoonnummer:');
-        if (!phoneNumber) return;
-
-        const address = prompt('Adres:');
-        if (!address) return;
-
-        const order = {
-            customerName,
-            email,
-            phoneNumber,
-            address,
-            totalPrice: cart.getTotal(),
-            orderItems: cartItems.map(item => ({
-                pigeonId: item.id,
-                pigeonTitle: item.title,
-                price: item.price
-            }))
-        };
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/orders`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(order)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                cart.clear();
-                this.updateCartBadge();
-                alert(`Bestelling geplaatst! Order nummer: ${result.id}`);
-                this.navigate('/');
-            } else {
-                alert('Fout bij het plaatsen van de bestelling');
-            }
-        } catch (error) {
-            console.error('Error placing order:', error);
-            alert('Fout bij het plaatsen van de bestelling');
         }
     }
 };
