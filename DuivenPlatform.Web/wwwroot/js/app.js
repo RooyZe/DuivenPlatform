@@ -85,6 +85,8 @@ const router = {
             await this.loadPigeonsForSale();
         } else if (path === '/winkelwagen') {
             this.loadCart();
+        } else if (path === '/afrekenen') {
+            this.loadCheckout();
         } else {
             app.innerHTML = '<h2>Pagina niet gevonden</h2>';
         }
@@ -336,6 +338,10 @@ const router = {
                     <div class="cart-total-bar">
                         Totaal: €${total.toFixed(2)}
                     </div>
+
+                    <a href="#" onclick="router.navigate('/afrekenen'); return false;" class="cart-checkout-button">
+                        Afrekenen &gt;
+                    </a>
                 </div>
             </section>
         `;
@@ -374,6 +380,88 @@ const router = {
                 badgeNav.style.display = 'none';
             }
         }
+    },
+
+    loadCheckout() {
+        const cartItems = cart.getItems();
+        const total = cart.getTotal();
+        const app = document.getElementById('app');
+
+        if (cartItems.length === 0) {
+            app.innerHTML = `
+                <section class="home-page">
+                    <div class="section-bar">
+                        <h2>Afrekenen</h2>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-inner">
+                            <p>Je winkelwagen is leeg.</p>
+                            <a href="#" onclick="router.navigate('/duiven-te-koop'); return false;" class="btn btn-primary">Naar duiven te koop</a>
+                        </div>
+                    </div>
+                </section>
+            `;
+            return;
+        }
+
+        app.innerHTML = `
+            <section class="checkout-page">
+                <div class="section-bar">
+                    <h2>Afrekenen</h2>
+                </div>
+
+                <div class="checkout-container">
+                    <form id="checkout-form" class="checkout-form">
+                        <input type="text" id="customer-name" name="customerName" placeholder="Naam" required class="checkout-input" />
+                        <input type="email" id="customer-email" name="email" placeholder="E-Mail" required class="checkout-input" />
+                        <input type="tel" id="customer-phone" name="phoneNumber" placeholder="Telefoonnummer" class="checkout-input" />
+                        <input type="text" id="customer-address" name="address" placeholder="Locatie" class="checkout-input" />
+
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="ideal" checked />
+                                <span class="payment-button ideal">
+                                    <span class="payment-circle">0</span>
+                                    <span class="payment-text">iDeal</span>
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23cc0066' d='M0 0h40v40H0z'/%3E%3Cpath fill='white' d='M10 10h20v20H10z'/%3E%3C/svg%3E" alt="iDeal" class="payment-logo" />
+                                </span>
+                            </label>
+
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="visa" />
+                                <span class="payment-button visa">
+                                    <span class="payment-circle">0</span>
+                                    <span class="payment-text">Visa Kaart</span>
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%231A1F71' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='12' text-anchor='middle' dy='.3em' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa" class="payment-logo" />
+                                </span>
+                            </label>
+
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="paypal" />
+                                <span class="payment-button paypal">
+                                    <span class="payment-circle">0</span>
+                                    <span class="payment-text">Pay Pal</span>
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%23003087' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='%2300457C' font-size='10' text-anchor='middle' dy='.3em' font-weight='bold'%3EPayPal%3C/text%3E%3C/svg%3E" alt="PayPal" class="payment-logo" />
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="checkout-total">
+                            Totaal: €${total.toFixed(2)}
+                        </div>
+
+                        <button type="submit" class="checkout-submit-button">Afrekenen</button>
+                    </form>
+                </div>
+            </section>
+        `;
+
+        // Form submit handler wordt toegevoegd in stap 6
+        const form = document.getElementById('checkout-form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Bestelling wordt verwerkt in stap 6!');
+        });
     }
 };
 
