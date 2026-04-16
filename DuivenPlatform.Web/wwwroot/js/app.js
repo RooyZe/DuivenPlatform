@@ -456,11 +456,95 @@ const router = {
             </section>
         `;
 
-        // Form submit handler wordt toegevoegd in stap 6
+        // Checkout form submit handler
         const form = document.getElementById('checkout-form');
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('Bestelling wordt verwerkt in stap 6!');
+
+            const submitButton = form.querySelector('.checkout-submit-button');
+            const originalText = submitButton.textContent;
+
+            // Disable button tijdens verwerking
+            submitButton.disabled = true;
+            submitButton.textContent = 'Bezig met verwerken...';
+
+            // Haal formulier data op
+            const formData = new FormData(form);
+            const customerName = formData.get('customerName');
+            const email = formData.get('email');
+            const phoneNumber = formData.get('phoneNumber');
+            const address = formData.get('address');
+            const paymentMethod = formData.get('payment');
+
+            // Validatie
+            if (!customerName || !email) {
+                alert('Vul minimaal naam en email in');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                return;
+            }
+
+            // Maak order object
+            const order = {
+                customerName: customerName,
+                email: email,
+                phoneNumber: phoneNumber || '',
+                address: address || '',
+                totalPrice: total,
+                orderItems: cartItems.map(item => ({
+                    pigeonId: item.id,
+                    pigeonTitle: item.title,
+                    price: item.price
+                }))
+            };
+
+            try {
+                // POST naar API
+                const response = await fetch(`${API_BASE_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    // Leeg winkelwagen
+                    cart.clear();
+                    this.updateCartBadge();
+
+                    // Toon succesmelding
+                    app.innerHTML = `
+                        <section class="home-page">
+                            <div class="section-bar">
+                                <h2>Bestelling Geplaatst!</h2>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-inner">
+                                    <p style="margin-bottom: 12px;">✅ Je bestelling is succesvol geplaatst!</p>
+                                    <p style="margin-bottom: 12px;"><strong>Order nummer:</strong> ${result.id}</p>
+                                    <p style="margin-bottom: 12px;"><strong>Totaal:</strong> €${result.totalPrice.toFixed(2)}</p>
+                                    <p style="margin-bottom: 12px;"><strong>Betaalmethode:</strong> ${paymentMethod}</p>
+                                    <p style="margin-bottom: 20px;">Je ontvangt een bevestigingsmail op ${email}</p>
+                                    <a href="#" onclick="router.navigate('/'); return false;" style="display: inline-block; background: #4f8fc0; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 700;">Terug naar home</a>
+                                </div>
+                            </div>
+                        </section>
+                    `;
+                } else {
+                    const error = await response.text();
+                    alert('Fout bij het plaatsen van de bestelling: ' + error);
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Er ging iets mis bij het plaatsen van de bestelling. Probeer het later opnieuw.');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
         });
     }
 };
