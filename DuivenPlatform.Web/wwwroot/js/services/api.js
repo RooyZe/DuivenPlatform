@@ -24,7 +24,6 @@ export const api = {
             });
 
             if (!response.ok) {
-                // Try to parse validation errors from API
                 let errorData;
                 try {
                     errorData = await response.json();
