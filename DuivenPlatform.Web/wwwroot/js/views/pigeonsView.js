@@ -1,0 +1,33 @@
+// Pigeons View - renders the pigeons overview page
+export function renderPigeonsPage() {
+    return `
+        <section class="home-page">
+            <div class="section-bar">
+                <h2>Onze duiven</h2>
+            </div>
+
+            <div class="pigeons-list">
+                <article class="pigeon-card-simple">
+                    <h3 class="card-title">Miss Milos</h3>
+                    <div class="card-image-wrap">
+                        <img src="/images/miss-milos.jpg" alt="Foto van duif Miss Milos" class="card-img" />
+                    </div>
+                </article>
+
+                <article class="pigeon-card-simple">
+                    <h3 class="card-title">Red Rose</h3>
+                    <div class="card-image-wrap">
+                        <img src="/images/red-rose.jpg" alt="Foto van duif Red Rose" class="card-img" />
+                    </div>
+                </article>
+
+                <article class="pigeon-card-simple">
+                    <h3 class="card-title">Blue Wonder</h3>
+                    <div class="card-image-wrap">
+                        <img src="/images/blue-wonder.jpg" alt="Foto van duif Blue Wonder" class="card-img" />
+                    </div>
+                </article>
+            </div>
+        </section>
+    `;
+}
