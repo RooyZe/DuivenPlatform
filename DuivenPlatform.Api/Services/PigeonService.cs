@@ -37,7 +37,7 @@ namespace DuivenPlatform.Api.Services
         // Add new pigeon to database
         public async Task<Pigeon> CreateAsync(Pigeon pigeon)
         {
-            pigeon.IsSold = false; // Ensure new pigeons are not marked as sold
+            pigeon.IsSold = false;
             _context.Pigeons.Add(pigeon);
             await _context.SaveChangesAsync();
             return pigeon;
