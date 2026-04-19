@@ -24,8 +24,18 @@ export const api = {
             });
 
             if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error);
+                // Try to parse validation errors from API
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch {
+                    errorData = { message: await response.text() };
+                }
+
+                const error = new Error('Validation failed');
+                error.status = response.status;
+                error.validationErrors = errorData.errors || errorData;
+                throw error;
             }
 
             return await response.json();

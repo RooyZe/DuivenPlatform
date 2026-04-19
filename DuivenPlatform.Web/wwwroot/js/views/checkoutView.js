@@ -31,51 +31,114 @@ export function renderCheckoutPage(navigate, updateCartBadge) {
             </div>
 
             <div class="checkout-container">
-                <form id="checkout-form" class="checkout-form">
-                    <input type="text" id="customer-name" name="customerName" placeholder="Naam" required class="checkout-input" />
-                    <input type="email" id="customer-email" name="email" placeholder="E-Mail" required class="checkout-input" />
-                    <input type="tel" id="customer-phone" name="phoneNumber" placeholder="Telefoonnummer" class="checkout-input" />
-                    <input type="text" id="customer-address" name="address" placeholder="Locatie" class="checkout-input" />
-
-                    <div class="payment-methods">
-                        <label class="payment-option">
-                            <input type="radio" name="payment" value="ideal" checked />
-                            <span class="payment-button ideal">
-                                <span class="payment-circle">0</span>
-                                <span class="payment-text">iDeal</span>
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23cc0066' d='M0 0h40v40H0z'/%3E%3Cpath fill='white' d='M10 10h20v20H10z'/%3E%3C/svg%3E" alt="iDeal" class="payment-logo" />
-                            </span>
-                        </label>
-
-                        <label class="payment-option">
-                            <input type="radio" name="payment" value="visa" />
-                            <span class="payment-button visa">
-                                <span class="payment-circle">0</span>
-                                <span class="payment-text">Visa Kaart</span>
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%231A1F71' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='12' text-anchor='middle' dy='.3em' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa" class="payment-logo" />
-                            </span>
-                        </label>
-
-                        <label class="payment-option">
-                            <input type="radio" name="payment" value="paypal" />
-                            <span class="payment-button paypal">
-                                <span class="payment-circle">0</span>
-                                <span class="payment-text">Pay Pal</span>
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%23003087' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='%2300457C' font-size='10' text-anchor='middle' dy='.3em' font-weight='bold'%3EPayPal%3C/text%3E%3C/svg%3E" alt="PayPal" class="payment-logo" />
-                            </span>
-                        </label>
+                <form id="checkout-form" class="checkout-form" novalidate>
+                    <!-- WCAG 2.1.1: Keyboard accessible form fields with labels -->
+                    <div class="form-group">
+                        <label for="customer-name" class="sr-only">Naam (verplicht)</label>
+                        <input 
+                            type="text" 
+                            id="customer-name" 
+                            name="customerName" 
+                            placeholder="Naam *" 
+                            required 
+                            minlength="2"
+                            maxlength="100"
+                            aria-required="true"
+                            aria-describedby="name-error"
+                            class="checkout-input" 
+                        />
+                        <span id="name-error" class="error-message" role="alert" aria-live="polite"></span>
                     </div>
 
-                    <div class="checkout-total">
+                    <div class="form-group">
+                        <label for="customer-email" class="sr-only">E-mailadres (verplicht)</label>
+                        <input 
+                            type="email" 
+                            id="customer-email" 
+                            name="email" 
+                            placeholder="E-Mail *" 
+                            required 
+                            maxlength="100"
+                            aria-required="true"
+                            aria-describedby="email-error"
+                            class="checkout-input" 
+                        />
+                        <span id="email-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-phone" class="sr-only">Telefoonnummer (optioneel)</label>
+                        <input 
+                            type="tel" 
+                            id="customer-phone" 
+                            name="phoneNumber" 
+                            placeholder="Telefoonnummer" 
+                            maxlength="20"
+                            pattern="[0-9+\-\s()]*"
+                            aria-describedby="phone-error"
+                            class="checkout-input" 
+                        />
+                        <span id="phone-error" class="error-message" role="alert" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-address" class="sr-only">Locatie (optioneel)</label>
+                        <input 
+                            type="text" 
+                            id="customer-address" 
+                            name="address" 
+                            placeholder="Locatie" 
+                            maxlength="200"
+                            class="checkout-input" 
+                        />
+                    </div>
+
+                    <!-- WCAG 1.3.1: Proper fieldset for radio group -->
+                    <fieldset class="payment-methods">
+                        <legend class="sr-only">Kies een betaalmethode</legend>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="ideal" checked aria-label="iDeal betaling" />
+                            <span class="payment-button ideal">
+                                <span class="payment-circle" aria-hidden="true">0</span>
+                                <span class="payment-text">iDeal</span>
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23cc0066' d='M0 0h40v40H0z'/%3E%3Cpath fill='white' d='M10 10h20v20H10z'/%3E%3C/svg%3E" alt="" class="payment-logo" aria-hidden="true" />
+                            </span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="visa" aria-label="Visa kaart betaling" />
+                            <span class="payment-button visa">
+                                <span class="payment-circle" aria-hidden="true">0</span>
+                                <span class="payment-text">Visa Kaart</span>
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%231A1F71' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='12' text-anchor='middle' dy='.3em' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="" class="payment-logo" aria-hidden="true" />
+                            </span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="paypal" aria-label="PayPal betaling" />
+                            <span class="payment-button paypal">
+                                <span class="payment-circle" aria-hidden="true">0</span>
+                                <span class="payment-text">Pay Pal</span>
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Crect fill='%23003087' width='48' height='32' rx='4'/%3E%3Ctext x='50%25' y='50%25' fill='%2300457C' font-size='10' text-anchor='middle' dy='.3em' font-weight='bold'%3EPayPal%3C/text%3E%3C/svg%3E" alt="" class="payment-logo" aria-hidden="true" />
+                            </span>
+                        </label>
+                    </fieldset>
+
+                    <div class="checkout-total" role="status" aria-live="polite">
                         Totaal: €${total.toFixed(2)}
                     </div>
 
-                    <button type="submit" class="checkout-submit-button">Afrekenen</button>
+                    <!-- General error message for non-field-specific errors -->
+                    <div id="general-error" class="error-message" role="alert" aria-live="assertive" style="text-align: center; margin: 12px 0;"></div>
+
+                    <button type="submit" class="checkout-submit-button" aria-label="Bevestig bestelling en reken af">Afrekenen</button>
                 </form>
             </div>
         </section>
     `;
 
+    // ASVS V5.1.3: Client-side validation with proper error messages
     // Checkout form submit handler
     const form = document.getElementById('checkout-form');
     form.addEventListener('submit', async (e) => {
@@ -88,32 +151,51 @@ async function handleCheckoutSubmit(form, cartItems, total, navigate, updateCart
     const submitButton = form.querySelector('.checkout-submit-button');
     const originalText = submitButton.textContent;
 
-    // Disable button during processing
-    submitButton.disabled = true;
-    submitButton.textContent = 'Bezig met verwerken...';
+    // Clear previous errors
+    document.querySelectorAll('.error-message').forEach(span => span.textContent = '');
 
     // Get form data
     const formData = new FormData(form);
-    const customerName = formData.get('customerName');
-    const email = formData.get('email');
-    const phoneNumber = formData.get('phoneNumber');
-    const address = formData.get('address');
+    const customerName = formData.get('customerName')?.trim();
+    const email = formData.get('email')?.trim();
+    const phoneNumber = formData.get('phoneNumber')?.trim();
+    const address = formData.get('address')?.trim();
     const paymentMethod = formData.get('payment');
 
-    // Validation
-    if (!customerName || !email) {
-        alert('Vul minimaal naam en email in');
-        submitButton.disabled = false;
-        submitButton.textContent = originalText;
-        return;
+    // Client-side validation with inline error messages
+    let hasErrors = false;
+
+    if (!customerName || customerName.length < 2) {
+        document.getElementById('name-error').textContent = 'Naam is verplicht (minimaal 2 karakters)';
+        hasErrors = true;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        document.getElementById('email-error').textContent = 'Vul een geldig emailadres in';
+        hasErrors = true;
+    }
+
+    const phoneRegex = /^[0-9+\-\s()]*$/;
+    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
+        document.getElementById('phone-error').textContent = 'Ongeldig telefoonnummer';
+        hasErrors = true;
+    }
+
+    if (hasErrors) {
+        return; // Stop submission
+    }
+
+    // Disable button during processing
+    submitButton.disabled = true;
+    submitButton.textContent = 'Bezig met verwerken...';
 
     // Create order object
     const order = {
         customerName: customerName,
         email: email,
-        phoneNumber: phoneNumber || '',
-        address: address || '',
+        phoneNumber: phoneNumber || null,
+        address: address || null,
         totalPrice: total,
         orderItems: cartItems.map(item => ({
             pigeonId: item.id,
@@ -149,8 +231,43 @@ async function handleCheckoutSubmit(form, cartItems, total, navigate, updateCart
             </section>
         `;
     } catch (error) {
-        alert('Er ging iets mis bij het plaatsen van de bestelling. Probeer het later opnieuw.');
+        console.error('Order submission error:', error);
+
+        // Re-enable submit button
         submitButton.disabled = false;
         submitButton.textContent = originalText;
+
+        // Handle validation errors from API
+        if (error.status === 400 && error.validationErrors) {
+            // Map server-side validation errors to form fields
+            const errorMap = {
+                'CustomerName': 'name-error',
+                'Email': 'email-error',
+                'PhoneNumber': 'phone-error',
+                'TotalPrice': 'general-error'
+            };
+
+            let hasFieldError = false;
+
+            // Loop through validation errors and display them
+            for (const [field, messages] of Object.entries(error.validationErrors)) {
+                const errorElementId = errorMap[field];
+                if (errorElementId) {
+                    const errorElement = document.getElementById(errorElementId);
+                    if (errorElement) {
+                        errorElement.textContent = Array.isArray(messages) ? messages[0] : messages;
+                        hasFieldError = true;
+                    }
+                }
+            }
+
+            // If no field-specific errors were mapped, show general error
+            if (!hasFieldError) {
+                document.getElementById('general-error').textContent = 'Controleer de invoer en probeer opnieuw.';
+            }
+        } else {
+            // Show generic error message for network/server errors
+            document.getElementById('general-error').textContent = 'Er ging iets mis bij het plaatsen van de bestelling. Probeer het later opnieuw.';
+        }
     }
 }

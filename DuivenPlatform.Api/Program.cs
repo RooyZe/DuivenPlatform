@@ -38,6 +38,19 @@ namespace DuivenPlatform.Api
 
             var app = builder.Build();
 
+            // ASVS V9.1.1: Enforce HTTPS for all connections
+            app.UseHttpsRedirection();
+
+            // ASVS V14.4.1: Security headers
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+                await next();
+            });
+
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
