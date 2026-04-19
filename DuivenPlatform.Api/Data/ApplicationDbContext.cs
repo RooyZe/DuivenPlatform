@@ -10,12 +10,24 @@ namespace DuivenPlatform.Api.Data
         }
 
         public DbSet<Pigeon> Pigeons { get; set; } = null!;
+        public DbSet<Order> Orders { get; set; } = null!;
+        public DbSet<OrderItem> OrderItems { get; set; } = null!;
 
         // Configure database model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure decimal precision for prices
             modelBuilder.Entity<Pigeon>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Order>().Property(o => o.TotalPrice).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<OrderItem>().Property(oi => oi.Price).HasColumnType("decimal(18,2)");
+
+            // Configure Order-OrderItem relationship
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
         }
     }
 }

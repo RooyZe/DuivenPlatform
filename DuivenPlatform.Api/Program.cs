@@ -31,6 +31,7 @@ namespace DuivenPlatform.Api
             }
 
             builder.Services.AddScoped<IPigeonService, PigeonService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace DuivenPlatform.Api.Models
 {
@@ -15,5 +16,8 @@ namespace DuivenPlatform.Api.Models
         public string? Description { get; set; }
 
         public string? ImageUrl { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsSold { get; set; } = false;
     }
 }
