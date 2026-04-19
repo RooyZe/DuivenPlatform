@@ -30,6 +30,17 @@ namespace DuivenPlatform.Api.Services
         public async Task<Order> CreateOrderAsync(Order order)
         {
             order.OrderDate = DateTime.UtcNow;
+
+            // Markeer alle duiven in de bestelling als verkocht
+            foreach (var item in order.OrderItems)
+            {
+                var pigeon = await _context.Pigeons.FindAsync(item.PigeonId);
+                if (pigeon != null && !pigeon.IsSold)
+                {
+                    pigeon.IsSold = true;
+                }
+            }
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return order;

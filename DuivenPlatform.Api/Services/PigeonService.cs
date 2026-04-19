@@ -13,10 +13,13 @@ namespace DuivenPlatform.Api.Services
             _context = context;
         }
 
-        // Fetch all pigeons from database
+        // Fetch all pigeons from database (only available ones)
         public async Task<List<Pigeon>> GetAllAsync()
         {
-            return await _context.Pigeons.AsNoTracking().ToListAsync();
+            return await _context.Pigeons
+                .Where(p => !p.IsSold)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         // Fetch single pigeon by id
@@ -28,6 +31,7 @@ namespace DuivenPlatform.Api.Services
         // Add new pigeon to database
         public async Task<Pigeon> CreateAsync(Pigeon pigeon)
         {
+            pigeon.IsSold = false;
             _context.Pigeons.Add(pigeon);
             await _context.SaveChangesAsync();
             return pigeon;
