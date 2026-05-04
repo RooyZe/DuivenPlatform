@@ -42,5 +42,20 @@ namespace DuivenPlatform.Api.Services
             await _context.SaveChangesAsync();
             return pigeon;
         }
+
+        // Delete pigeon from database
+        // SECURITY: .FindAsync() en .Remove() gebruiken parameterized queries
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var pigeon = await _context.Pigeons.FindAsync(id);
+            if (pigeon == null)
+            {
+                return false;
+            }
+
+            _context.Pigeons.Remove(pigeon);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

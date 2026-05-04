@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using DuivenPlatform.Api.Models;
 using DuivenPlatform.Api.Services;
 
@@ -34,10 +35,24 @@ namespace DuivenPlatform.Api.Controllers
 
         // Create new pigeon
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] Pigeon pigeon)
         {
             var created = await _pigeonService.CreateAsync(pigeon);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
+        // Delete pigeon
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _pigeonService.DeleteAsync(id);
+            if (!success)
+            {
+                return NotFound(new { message = "Duif niet gevonden" });
+            }
+            return Ok(new { message = "Duif succesvol verwijderd" });
         }
     }
 }
