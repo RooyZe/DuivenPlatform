@@ -1,6 +1,8 @@
 // Shop View - renders the pigeons for sale page
 import { api } from '../services/api.js';
 import { cartService } from '../services/cartService.js';
+import { authService } from '../services/authService.js';
+import { router } from '../router.js';
 
 export async function renderShopPage(updateCartBadge) {
     const app = document.getElementById('app');
@@ -47,6 +49,16 @@ export async function renderShopPage(updateCartBadge) {
         // Attach event listeners to add-to-cart buttons
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Check if user is logged in
+                if (!authService.isLoggedIn()) {
+                    sessionStorage.setItem('auth_message', 'Je moet ingelogd zijn om een duif te kunnen kopen.');
+                    router.navigate('/register');
+                    return;
+                }
+
+                // Only add to cart if logged in
                 const pigeon = {
                     id: parseInt(e.target.dataset.id),
                     title: e.target.dataset.title,

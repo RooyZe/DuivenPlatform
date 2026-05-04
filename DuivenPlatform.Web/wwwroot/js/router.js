@@ -15,13 +15,12 @@ export const router = {
 
     async init() {
         this.setupEventListeners();
-        await this.checkAuthStatus(); // Check if user is logged in
+        await this.checkAuthStatus();
         await this.handleRoute();
         this.updateCartBadge();
     },
 
     setupEventListeners() {
-        // Navigation toggle (hamburger menu)
         const navToggle = document.getElementById('nav-toggle');
         if (navToggle) {
             navToggle.addEventListener('click', (e) => {
@@ -30,7 +29,6 @@ export const router = {
             });
         }
 
-        // Close navigation
         const navCloseIcon = document.getElementById('nav-close-icon');
         if (navCloseIcon) {
             navCloseIcon.addEventListener('click', (e) => {
@@ -44,7 +42,6 @@ export const router = {
             navClose.addEventListener('click', () => this.closeNav());
         }
 
-        // Cart icon in header
         const cartIcon = document.getElementById('cart-icon');
         if (cartIcon) {
             cartIcon.addEventListener('click', (e) => {
@@ -71,7 +68,6 @@ export const router = {
                     e.preventDefault();
                     const href = e.target.getAttribute('href');
 
-                    // Handle logout specially
                     if (e.target.id === 'nav-logout-link') {
                         this.handleLogout();
                         return;
@@ -112,7 +108,6 @@ export const router = {
             });
         }
 
-        // Browser back/forward buttons
         window.addEventListener('popstate', () => this.handleRoute());
     },
 
@@ -134,8 +129,20 @@ export const router = {
         } else if (path === '/duiven-te-koop') {
             await renderShopPage(this.updateCartBadge.bind(this));
         } else if (path === '/winkelwagen') {
+            // Check if user is logged in
+            if (!authService.isLoggedIn()) {
+                sessionStorage.setItem('auth_message', 'Je moet ingelogd zijn om je winkelwagen te bekijken.');
+                this.navigate('/register');
+                return;
+            }
             renderCartPage(this.navigate.bind(this), this.updateCartBadge.bind(this));
         } else if (path === '/afrekenen') {
+            // Check if user is logged in
+            if (!authService.isLoggedIn()) {
+                sessionStorage.setItem('auth_message', 'Je moet ingelogd zijn om af te rekenen.');
+                this.navigate('/register');
+                return;
+            }
             renderCheckoutPage(this.navigate.bind(this), this.updateCartBadge.bind(this));
         } else if (path === '/auth' || path === '/login' || path === '/register') {
             // Redirect to home if already logged in
@@ -146,7 +153,6 @@ export const router = {
             const activeTab = path === '/register' ? 'register' : 'login';
             renderAuthPage(this.navigate.bind(this), activeTab);
         } else if (path === '/account') {
-            // Redirect to auth if not logged in
             if (!authService.isLoggedIn()) {
                 this.navigate('/auth');
                 return;
@@ -177,7 +183,6 @@ export const router = {
     updateCartBadge() {
         const count = cartService.getCount();
 
-        // Header cart badge
         const badge = document.getElementById('cart-count');
         if (badge) {
             if (count > 0) {
@@ -189,7 +194,6 @@ export const router = {
             }
         }
 
-        // Nav overlay cart badge
         const badgeNav = document.getElementById('cart-count-nav');
         if (badgeNav) {
             if (count > 0) {

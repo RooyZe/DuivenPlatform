@@ -5,11 +5,21 @@ import { authService } from '../services/authService.js';
 export function renderAuthPage(navigate, activeTab = 'login') {
     const app = document.getElementById('app');
 
+    // Check for auth message in sessionStorage
+    const authMessage = sessionStorage.getItem('auth_message');
+    const messageHtml = authMessage ? `
+        <div class="auth-message-notification" id="auth-notification">
+            <p>${authMessage}</p>
+        </div>
+    ` : '';
+
     app.innerHTML = `
         <section class="auth-page">
             <div class="section-bar">
                 <h2>Login/registreer</h2>
             </div>
+
+            ${messageHtml}
 
             <div class="auth-container">
                 <!-- Tab buttons -->
@@ -168,6 +178,19 @@ export function renderAuthPage(navigate, activeTab = 'login') {
         </section>
     `;
 
+    // Clear the auth message from sessionStorage
+    if (authMessage) {
+        sessionStorage.removeItem('auth_message');
+
+        // Auto-hide notification after 5 seconds
+        setTimeout(() => {
+            const notification = document.getElementById('auth-notification');
+            if (notification) {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+    }
     // Setup tab switching
     const loginTab = document.getElementById('login-tab');
     const registerTab = document.getElementById('register-tab');
@@ -207,10 +230,8 @@ async function handleLogin(form, navigate) {
     const submitButton = form.querySelector('.auth-submit-button');
     const originalText = submitButton.textContent;
 
-    // Clear previous errors
     document.querySelectorAll('.error-message').forEach(span => span.textContent = '');
 
-    // Get form data
     const formData = new FormData(form);
     const email = formData.get('email')?.trim();
     const password = formData.get('password');
@@ -245,11 +266,9 @@ async function handleLogin(form, navigate) {
     } catch (error) {
         console.error('Login error:', error);
 
-        // Show error message
         const generalError = document.getElementById('login-general-error');
         generalError.textContent = error.message || 'Inloggen mislukt. Controleer je gegevens.';
 
-        // Re-enable submit button
         submitButton.disabled = false;
         submitButton.textContent = originalText;
     }
@@ -259,7 +278,6 @@ async function handleRegister(form, navigate) {
     const submitButton = form.querySelector('.auth-submit-button');
     const originalText = submitButton.textContent;
 
-    // Clear previous errors
     document.querySelectorAll('.error-message').forEach(span => span.textContent = '');
 
     // Get form data
@@ -298,7 +316,6 @@ async function handleRegister(form, navigate) {
         return;
     }
 
-    // Disable submit button
     submitButton.disabled = true;
     submitButton.textContent = 'Registreren...';
 
@@ -314,12 +331,10 @@ async function handleRegister(form, navigate) {
 
         authService.setUser(user);
 
-        // Redirect to home
         navigate('/');
     } catch (error) {
         console.error('Register error:', error);
 
-        // Show error message
         const generalError = document.getElementById('register-general-error');
         if (error.message.includes('Email')) {
             generalError.textContent = 'Dit e-mailadres is al in gebruik';
@@ -327,7 +342,6 @@ async function handleRegister(form, navigate) {
             generalError.textContent = error.message || 'Registratie mislukt. Probeer het opnieuw.';
         }
 
-        // Re-enable submit button
         submitButton.disabled = false;
         submitButton.textContent = originalText;
     }
