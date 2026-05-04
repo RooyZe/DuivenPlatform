@@ -5,13 +5,17 @@ import { renderRacesPage } from './views/racesView.js';
 import { renderShopPage } from './views/shopView.js';
 import { renderCartPage } from './views/cartView.js';
 import { renderCheckoutPage } from './views/checkoutView.js';
+import { renderAuthPage } from './views/authView.js';
+import { renderAccountPage, initAccountPage } from './views/accountView.js';
 import { cartService } from './services/cartService.js';
+import { authService } from './services/authService.js';
 
 export const router = {
     currentPage: '',
 
     async init() {
         this.setupEventListeners();
+        await this.checkAuthStatus(); // Check if user is logged in
         await this.handleRoute();
         this.updateCartBadge();
     },
@@ -66,11 +70,44 @@ export const router = {
                 if (e.target.tagName === 'A' && e.target.classList.contains('nav-item-large')) {
                     e.preventDefault();
                     const href = e.target.getAttribute('href');
+
+                    // Handle logout specially
+                    if (e.target.id === 'nav-logout-link') {
+                        this.handleLogout();
+                        return;
+                    }
+
                     this.navigate(href);
                     this.closeNav();
                 }
                 if (e.target.classList.contains('nav-overlay-backdrop')) {
                     this.closeNav();
+                }
+            });
+        }
+
+        // User icon clicks
+        const userIcon = document.getElementById('user-icon');
+        if (userIcon) {
+            userIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (authService.isLoggedIn()) {
+                    this.navigate('/account');
+                } else {
+                    this.navigate('/auth');
+                }
+            });
+        }
+
+        const userIconNav = document.getElementById('user-icon-nav');
+        if (userIconNav) {
+            userIconNav.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.closeNav();
+                if (authService.isLoggedIn()) {
+                    this.handleLogout();
+                } else {
+                    this.navigate('/auth');
                 }
             });
         }
@@ -100,6 +137,22 @@ export const router = {
             renderCartPage(this.navigate.bind(this), this.updateCartBadge.bind(this));
         } else if (path === '/afrekenen') {
             renderCheckoutPage(this.navigate.bind(this), this.updateCartBadge.bind(this));
+        } else if (path === '/auth' || path === '/login' || path === '/register') {
+            // Redirect to home if already logged in
+            if (authService.isLoggedIn()) {
+                this.navigate('/');
+                return;
+            }
+            const activeTab = path === '/register' ? 'register' : 'login';
+            renderAuthPage(this.navigate.bind(this), activeTab);
+        } else if (path === '/account') {
+            // Redirect to auth if not logged in
+            if (!authService.isLoggedIn()) {
+                this.navigate('/auth');
+                return;
+            }
+            app.innerHTML = renderAccountPage(this.navigate.bind(this));
+            initAccountPage(this.navigate.bind(this));
         } else {
             app.innerHTML = '<h2>Pagina niet gevonden</h2>';
         }
@@ -146,6 +199,44 @@ export const router = {
                 badgeNav.textContent = '';
                 badgeNav.style.display = 'none';
             }
+        }
+    },
+
+    async checkAuthStatus() {
+        const user = await api.getCurrentUser();
+        if (user) {
+            authService.setUser(user);
+        } else {
+            authService.clearUser();
+        }
+        this.updateAuthUI();
+    },
+
+    updateAuthUI() {
+        const isLoggedIn = authService.isLoggedIn();
+        const loginLink = document.getElementById('nav-login-link');
+        const logoutLink = document.getElementById('nav-logout-link');
+
+        if (loginLink && logoutLink) {
+            if (isLoggedIn) {
+                loginLink.style.display = 'none';
+                logoutLink.style.display = 'block';
+            } else {
+                loginLink.style.display = 'block';
+                logoutLink.style.display = 'none';
+            }
+        }
+    },
+
+    async handleLogout() {
+        try {
+            await api.logout();
+            authService.clearUser();
+            this.updateAuthUI();
+            this.navigate('/');
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Uitloggen mislukt');
         }
     }
 };

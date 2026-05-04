@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DuivenPlatform.Api.Data;
 using DuivenPlatform.Api.Models;
@@ -19,7 +20,8 @@ namespace DuivenPlatform.Api
                 {
                     policy.WithOrigins("http://localhost:5137", "https://localhost:7153")
                           .AllowAnyMethod()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowCredentials(); // Important for cookies!
                 });
             });
 
@@ -29,6 +31,39 @@ namespace DuivenPlatform.Api
                 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
             }
+
+            // Configure ASP.NET Core Identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+            // Configure cookie authentication
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.None; // Important for CORS
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
+
+                // Return 401 instead of redirecting to login page
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
+            });
 
             builder.Services.AddScoped<IPigeonService, PigeonService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
@@ -58,6 +93,12 @@ namespace DuivenPlatform.Api
                 {
                     var context = services.GetRequiredService<Data.ApplicationDbContext>();
                     context.Database.Migrate();
+
+                    // Seed roles
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+                    SeedRolesAsync(roleManager).Wait();
+
+                    // Seed pigeons
                     if (!context.Pigeons.Any())
                     {
                         context.Pigeons.AddRange(
@@ -84,11 +125,25 @@ namespace DuivenPlatform.Api
 
             app.UseCors("AllowFrontend");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole<int>> roleManager)
+        {
+            string[] roles = { "Admin", "Customer" };
+
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole<int>(role));
+                }
+            }
         }
     }
 }
