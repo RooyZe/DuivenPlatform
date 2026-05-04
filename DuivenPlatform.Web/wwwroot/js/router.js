@@ -7,8 +7,10 @@ import { renderCartPage } from './views/cartView.js';
 import { renderCheckoutPage } from './views/checkoutView.js';
 import { renderAuthPage } from './views/authView.js';
 import { renderAccountPage, initAccountPage } from './views/accountView.js';
+import { renderAdminPage } from './views/adminView.js';
 import { cartService } from './services/cartService.js';
 import { authService } from './services/authService.js';
+import { api } from './services/api.js';
 
 export const router = {
     currentPage: '',
@@ -67,12 +69,6 @@ export const router = {
                 if (e.target.tagName === 'A' && e.target.classList.contains('nav-item-large')) {
                     e.preventDefault();
                     const href = e.target.getAttribute('href');
-
-                    if (e.target.id === 'nav-logout-link') {
-                        this.handleLogout();
-                        return;
-                    }
-
                     this.navigate(href);
                     this.closeNav();
                 }
@@ -120,6 +116,9 @@ export const router = {
         const path = window.location.pathname;
         const app = document.getElementById('app');
 
+        // Update auth UI on every route change
+        this.updateAuthUI();
+
         if (path === '/' || path === '/index.html') {
             app.innerHTML = renderHomePage();
         } else if (path === '/duiven') {
@@ -153,12 +152,20 @@ export const router = {
             const activeTab = path === '/register' ? 'register' : 'login';
             renderAuthPage(this.navigate.bind(this), activeTab);
         } else if (path === '/account') {
+            // Redirect to auth if not logged in
             if (!authService.isLoggedIn()) {
                 this.navigate('/auth');
                 return;
             }
             app.innerHTML = renderAccountPage(this.navigate.bind(this));
             initAccountPage(this.navigate.bind(this));
+        } else if (path === '/admin/duiven') {
+            // Redirect to home if not admin
+            if (!authService.isAdmin()) {
+                this.navigate('/');
+                return;
+            }
+            await renderAdminPage(this.navigate.bind(this));
         } else {
             app.innerHTML = '<h2>Pagina niet gevonden</h2>';
         }
@@ -217,18 +224,12 @@ export const router = {
     },
 
     updateAuthUI() {
-        const isLoggedIn = authService.isLoggedIn();
-        const loginLink = document.getElementById('nav-login-link');
-        const logoutLink = document.getElementById('nav-logout-link');
+        const isAdmin = authService.isAdmin();
+        const adminLink = document.getElementById('nav-admin-link');
 
-        if (loginLink && logoutLink) {
-            if (isLoggedIn) {
-                loginLink.style.display = 'none';
-                logoutLink.style.display = 'block';
-            } else {
-                loginLink.style.display = 'block';
-                logoutLink.style.display = 'none';
-            }
+        // Show admin link only for admins in hamburger menu
+        if (adminLink) {
+            adminLink.style.display = isAdmin ? 'block' : 'none';
         }
     },
 

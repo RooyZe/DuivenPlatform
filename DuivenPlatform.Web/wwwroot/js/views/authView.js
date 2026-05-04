@@ -178,11 +178,9 @@ export function renderAuthPage(navigate, activeTab = 'login') {
         </section>
     `;
 
-    // Clear the auth message from sessionStorage
     if (authMessage) {
         sessionStorage.removeItem('auth_message');
 
-        // Auto-hide notification after 5 seconds
         setTimeout(() => {
             const notification = document.getElementById('auth-notification');
             if (notification) {
@@ -253,7 +251,6 @@ async function handleLogin(form, navigate) {
         return;
     }
 
-    // Disable submit button
     submitButton.disabled = true;
     submitButton.textContent = 'Inloggen...';
 

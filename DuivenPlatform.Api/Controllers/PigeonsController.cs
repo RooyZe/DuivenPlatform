@@ -42,6 +42,19 @@ namespace DuivenPlatform.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
+        // Update pigeon
+        [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] Pigeon pigeon)
+        {
+            var updated = await _pigeonService.UpdateAsync(id, pigeon);
+            if (updated == null)
+            {
+                return NotFound(new { message = "Duif niet gevonden" });
+            }
+            return Ok(updated);
+        }
+
         // Delete pigeon
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
