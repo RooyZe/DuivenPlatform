@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DuivenPlatform.Api.Models;
 
 namespace DuivenPlatform.Api.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -16,7 +18,7 @@ namespace DuivenPlatform.Api.Data
         // Configure database model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // Important: call base for Identity tables
 
             // Configure decimal precision for prices
             modelBuilder.Entity<Pigeon>().Property(p => p.Price).HasColumnType("decimal(18,2)");
