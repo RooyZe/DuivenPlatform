@@ -6,6 +6,7 @@ import { renderShopPage } from './views/shopView.js';
 import { renderCartPage } from './views/cartView.js';
 import { renderCheckoutPage } from './views/checkoutView.js';
 import { renderAuthPage } from './views/authView.js';
+import { renderAccountPage, initAccountPage } from './views/accountView.js';
 import { cartService } from './services/cartService.js';
 import { authService } from './services/authService.js';
 
@@ -91,7 +92,7 @@ export const router = {
             userIcon.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (authService.isLoggedIn()) {
-                    this.handleLogout();
+                    this.navigate('/account');
                 } else {
                     this.navigate('/auth');
                 }
@@ -144,6 +145,14 @@ export const router = {
             }
             const activeTab = path === '/register' ? 'register' : 'login';
             renderAuthPage(this.navigate.bind(this), activeTab);
+        } else if (path === '/account') {
+            // Redirect to auth if not logged in
+            if (!authService.isLoggedIn()) {
+                this.navigate('/auth');
+                return;
+            }
+            app.innerHTML = renderAccountPage(this.navigate.bind(this));
+            initAccountPage(this.navigate.bind(this));
         } else {
             app.innerHTML = '<h2>Pagina niet gevonden</h2>';
         }
