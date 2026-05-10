@@ -19,10 +19,8 @@ export const cartService = {
                 imageUrl: pigeon.imageUrl
             });
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
-            alert(`${pigeon.title} toegevoegd aan winkelwagen!`);
             return true;
         } else {
-            alert(`${pigeon.title} zit al in je winkelwagen!`);
             return false;
         }
     },

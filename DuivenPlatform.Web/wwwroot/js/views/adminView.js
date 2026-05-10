@@ -382,7 +382,9 @@ async function handleEditPigeon(form, navigate) {
 }
 
 async function handleDeletePigeon(id, title, navigate) {
-    if (!confirm(`Weet je zeker dat je "${title}" wilt verwijderen?`)) {
+    // Show simple confirmation
+    const confirmed = await showSimpleConfirm(`Weet je zeker dat je "${title}" wilt verwijderen?`);
+    if (!confirmed) {
         return;
     }
 
@@ -399,10 +401,87 @@ async function handleDeletePigeon(id, title, navigate) {
             throw new Error('Fout bij verwijderen van duif');
         }
 
-        alert('Duif succesvol verwijderd!');
-        navigate('/admin/duiven');
+        showToast('Duif succesvol verwijderd!', 'success');
+        setTimeout(() => navigate('/admin/duiven'), 1500);
     } catch (error) {
         console.error('Error deleting pigeon:', error);
-        alert(error.message || 'Er is een fout opgetreden');
+        showToast(error.message || 'Er is een fout opgetreden', 'error');
     }
+}
+
+function showToast(message, type = 'success') {
+    // Remove existing toast if any
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+function showSimpleConfirm(message) {
+    return new Promise((resolve) => {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'simple-confirm-overlay';
+
+        // Create box
+        const box = document.createElement('div');
+        box.className = 'simple-confirm-box';
+
+        // Message
+        const msg = document.createElement('p');
+        msg.className = 'simple-confirm-message';
+        msg.textContent = message;
+
+        // Buttons
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'simple-confirm-buttons';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Annuleren';
+        cancelBtn.className = 'simple-confirm-btn simple-confirm-cancel';
+
+        const okBtn = document.createElement('button');
+        okBtn.textContent = 'OK';
+        okBtn.className = 'simple-confirm-btn simple-confirm-ok';
+
+        btnContainer.appendChild(cancelBtn);
+        btnContainer.appendChild(okBtn);
+
+        box.appendChild(msg);
+        box.appendChild(btnContainer);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        // Event handlers
+        const cleanup = (result) => {
+            overlay.remove();
+            resolve(result);
+        };
+
+        cancelBtn.addEventListener('click', () => cleanup(false));
+        okBtn.addEventListener('click', () => cleanup(true));
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) cleanup(false);
+        });
+    });
 }
