@@ -1,11 +1,13 @@
 using DuivenPlatform.Api.Models;
 using DuivenPlatform.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DuivenPlatform.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
