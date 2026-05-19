@@ -1,0 +1,56 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Create production settings for API
+      run: |
+        cat > DuivenPlatform.Api/appsettings.Production.json << EOF
+        {
+          "ConnectionStrings": {
+            "DefaultConnection": "${{ secrets.DB_CONNECTION_STRING }}"
+          },
+          "Logging": {
+            "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+            }
+          },
+          "AllowedHosts": "*"
+        }
+        EOF
+
+    - name: Create production config for Web
+      run: |
+        cat > DuivenPlatform.Web/wwwroot/js/config.js << EOF
+        // API Configuration
+        export const API_BASE_URL = '${{ vars.PRODUCTION_API_URL }}';
+        EOF
+
+    - name: Publish API
+      run: dotnet publish DuivenPlatform.Api/DuivenPlatform.Api.csproj -c Release -o ./publish/api
+
+    - name: Publish Web
+      run: dotnet publish DuivenPlatform.Web/DuivenPlatform.Web.csproj -c Release -o ./publish/web
